@@ -5,439 +5,365 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campo Minado</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: Arial, sans-serif; 
-            background: #2c3e50; 
-            padding: 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
+        body {
+            font-family: Arial, sans-serif;
+            background: #2c3e50;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .container { 
-            background: white; 
-            border-radius: 10px; 
-            padding: 20px; 
-            max-width: 500px; 
-            width: 100%; 
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            text-align: center;
         }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 20px; }
-        .game-info { 
-            display: flex; 
-            justify-content: space-between; 
-            margin-bottom: 20px; 
-            padding: 10px; 
-            background: #ecf0f1; 
-            border-radius: 5px; 
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
         }
-        .info-item { font-weight: bold; }
-        button { 
-            background: #e74c3c; 
-            color: white; 
-            border: none; 
-            padding: 8px 15px; 
-            border-radius: 5px; 
-            cursor: pointer; 
+        .info {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            font-weight: bold;
         }
-        .game-board { 
-            display: grid; 
-            grid-template-columns: repeat(9, 35px); 
-            gap: 2px; 
-            margin-bottom: 20px; 
-            justify-content: center; 
+        .tabuleiro {
+            display: grid;
+            grid-template-columns: repeat(9, 30px);
+            grid-gap: 2px;
+            margin: 20px auto;
+            background: #7f8c8d;
+            padding: 5px;
+            border-radius: 5px;
         }
-        .cell { 
-            width: 35px; 
-            height: 35px; 
-            background: #bdc3c7; 
-            border: 2px outset #ecf0f1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: bold; 
-            cursor: pointer; 
-            user-select: none; 
+        .celula {
+            width: 30px;
+            height: 30px;
+            background: #bdc3c7;
+            border: 2px outset #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
         }
-        .cell.revealed { background: #ecf0f1; border: 1px solid #bdc3c7; }
-        .cell.mine { background: #e74c3c; color: white; }
-        .cell.flagged { background: #f1c40f; }
-        .cell.number-1 { color: #3498db; }
-        .cell.number-2 { color: #27ae60; }
-        .cell.number-3 { color: #e74c3c; }
-        .instructions { 
-            background: #ecf0f1; 
-            padding: 15px; 
-            border-radius: 5px; 
-            font-size: 14px; 
+        .celula.revelada {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
         }
-        .instructions ul { list-style: none; }
-        .instructions li { margin: 5px 0; }
-        .game-over { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.8); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+        .celula.mina {
+            background: #e74c3c;
+            color: white;
         }
-        .game-over-content { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 10px; 
-            text-align: center; 
+        .celula.bandeira {
+            background: #f1c40f;
         }
-        .hidden { display: none; }
-        .win { color: #27ae60; }
-        .lose { color: #e74c3c; }
+        .numero-1 { color: #3498db; }
+        .numero-2 { color: #27ae60; }
+        .numero-3 { color: #e74c3c; }
+        .numero-4 { color: #8e44ad; }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-over div {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .oculto {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Campo Minado</h1>
-        
-        <div class="game-info">
-            <div class="info-item">Minas: <span id="minas-count">10</span></div>
-            <div class="info-item">Tempo: <span id="timer">0</span>s</div>
-            <button id="restart-btn">Reiniciar</button>
+        <div class="info">
+            <div>Minas: <span id="contador-minas">10</span></div>
+            <div>Tempo: <span id="tempo">0</span>s</div>
         </div>
-
-        <div id="game-board" class="game-board"></div>
-
-        <div class="instructions">
-            <strong>Instrucoes:</strong>
-            <ul>
-                <li>Clique Esquerdo: Revelar celula</li>
-                <li>Clique Direito: Marcar/Desmarcar mina</li>
-                <li>%: Mina marcada</li>
-                <li>@: Mina revelada</li>
-            </ul>
+        <button onclick="reiniciarJogo()">Reiniciar</button>
+        <div id="tabuleiro" class="tabuleiro"></div>
+        <div class="info">
+            <small>Clique esquerdo: Revelar | Clique direito: Marcar bandeira</small>
         </div>
+    </div>
 
-        <div id="game-over" class="game-over hidden">
-            <div class="game-over-content">
-                <h2 id="game-over-message"></h2>
-                <button id="play-again-btn">Jogar Novamente</button>
-            </div>
+    <div id="fim-jogo" class="game-over oculto">
+        <div>
+            <h2 id="mensagem-fim"></h2>
+            <button onclick="reiniciarJogo()">Jogar Novamente</button>
         </div>
     </div>
 
     <script>
         class CampoMinado {
             constructor() {
-                this.MINAS_TOTAL = 10;
-                this.LINHAS = 9;
-                this.COLUNAS = 9;
-                this.MINA = -1;
-                this.VAZIO = 0;
-                this.BANDEIRA = -3;
-                
-                this.matriz = [];
-                this.matrizJogo = [];
-                this.gameOver = false;
-                this.minasRestantes = this.MINAS_TOTAL;
+                this.linhas = 9;
+                this.colunas = 9;
+                this.totalMinas = 10;
+                this.tabuleiro = [];
+                this.jogo = [];
+                this.fimDeJogo = false;
                 this.minasMarcadas = 0;
-                
                 this.iniciar();
             }
-            
+
             iniciar() {
-                this.matriz = Array(this.LINHAS).fill().map(() => Array(this.COLUNAS).fill(0));
-                this.matrizJogo = Array(this.LINHAS).fill().map(() => Array(this.COLUNAS).fill(this.VAZIO));
-                this.gameOver = false;
-                this.minasRestantes = this.MINAS_TOTAL;
+                this.tabuleiro = Array(this.linhas).fill().map(() => Array(this.colunas).fill(0));
+                this.jogo = Array(this.linhas).fill().map(() => Array(this.colunas).fill(-1));
+                this.fimDeJogo = false;
                 this.minasMarcadas = 0;
-                
                 this.colocarMinas();
-                this.calcularVizinhos();
+                this.calcularNumeros();
             }
-            
+
             colocarMinas() {
-                let minasColocadas = 0;
-                while (minasColocadas < this.MINAS_TOTAL) {
-                    const linha = Math.floor(Math.random() * this.LINHAS);
-                    const coluna = Math.floor(Math.random() * this.COLUNAS);
-                    
-                    if (this.matriz[linha][coluna] !== this.MINA) {
-                        this.matriz[linha][coluna] = this.MINA;
-                        minasColocadas++;
+                let minas = 0;
+                while (minas < this.totalMinas) {
+                    const x = Math.floor(Math.random() * this.linhas);
+                    const y = Math.floor(Math.random() * this.colunas);
+                    if (this.tabuleiro[x][y] !== 9) {
+                        this.tabuleiro[x][y] = 9;
+                        minas++;
                     }
                 }
             }
-            
-            calcularVizinhos() {
-                const direcoes = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                
-                for (let i = 0; i < this.LINHAS; i++) {
-                    for (let j = 0; j < this.COLUNAS; j++) {
-                        if (this.matriz[i][j] !== this.MINA) {
-                            let count = 0;
-                            for (const [dx, dy] of direcoes) {
-                                const ni = i + dx, nj = j + dy;
-                                if (ni >= 0 && ni < this.LINHAS && nj >= 0 && nj < this.COLUNAS) {
-                                    if (this.matriz[ni][nj] === this.MINA) count++;
+
+            calcularNumeros() {
+                for (let x = 0; x < this.linhas; x++) {
+                    for (let y = 0; y < this.colunas; y++) {
+                        if (this.tabuleiro[x][y] === 9) continue;
+                        let count = 0;
+                        for (let dx = -1; dx <= 1; dx++) {
+                            for (let dy = -1; dy <= 1; dy++) {
+                                const nx = x + dx, ny = y + dy;
+                                if (nx >= 0 && nx < this.linhas && ny >= 0 && ny < this.colunas) {
+                                    if (this.tabuleiro[nx][ny] === 9) count++;
                                 }
                             }
-                            this.matriz[i][j] = count;
+                        }
+                        this.tabuleiro[x][y] = count;
+                    }
+                }
+            }
+
+            revelar(x, y) {
+                if (this.fimDeJogo || this.jogo[x][y] >= 0) return false;
+                
+                if (this.tabuleiro[x][y] === 9) {
+                    this.jogo[x][y] = 9;
+                    this.fimDeJogo = true;
+                    return true;
+                }
+
+                this.jogo[x][y] = this.tabuleiro[x][y];
+                
+                if (this.tabuleiro[x][y] === 0) {
+                    for (let dx = -1; dx <= 1; dx++) {
+                        for (let dy = -1; dy <= 1; dy++) {
+                            const nx = x + dx, ny = y + dy;
+                            if (nx >= 0 && nx < this.linhas && ny >= 0 && ny < this.colunas) {
+                                if (this.jogo[nx][ny] === -1) {
+                                    this.revelar(nx, ny);
+                                }
+                            }
                         }
                     }
                 }
-            }
-            
-            revelar(linha, coluna) {
-                if (this.gameOver || this.matrizJogo[linha][coluna] !== this.VAZIO) return false;
-                
-                if (this.matriz[linha][coluna] === this.MINA) {
-                    this.matrizJogo[linha][coluna] = this.MINA;
-                    this.gameOver = true;
-                    return true;
-                }
-                
-                if (this.matriz[linha][coluna] > 0) {
-                    this.matrizJogo[linha][coluna] = this.matriz[linha][coluna];
-                    return true;
-                }
-                
-                // Revelar area vazia
-                this.revelarVazios(linha, coluna);
                 return true;
             }
-            
-            revelarVazios(linha, coluna) {
-                const fila = [[linha, coluna]];
-                const visitados = new Set();
+
+            marcar(x, y) {
+                if (this.fimDeJogo || this.jogo[x][y] >= 0) return false;
                 
-                while (fila.length > 0) {
-                    const [i, j] = fila.shift();
-                    const chave = `${i},${j}`;
-                    
-                    if (visitados.has(chave)) continue;
-                    visitados.add(chave);
-                    
-                    this.matrizJogo[i][j] = this.matriz[i][j];
-                    
-                    if (this.matriz[i][j] === 0) {
-                        const direcoes = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                        for (const [dx, dy] of direcoes) {
-                            const ni = i + dx, nj = j + dy;
-                            if (ni >= 0 && ni < this.LINHAS && nj >= 0 && nj < this.COLUNAS) {
-                                if (this.matrizJogo[ni][nj] === this.VAZIO) {
-                                    fila.push([ni, nj]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            marcar(linha, coluna) {
-                if (this.gameOver) return false;
-                
-                if (this.matrizJogo[linha][coluna] === this.VAZIO) {
-                    if (this.minasMarcadas < this.MINAS_TOTAL) {
-                        this.matrizJogo[linha][coluna] = this.BANDEIRA;
-                        this.minasMarcadas++;
-                        if (this.matriz[linha][coluna] === this.MINA) {
-                            this.minasRestantes--;
-                        }
-                    }
-                } else if (this.matrizJogo[linha][coluna] === this.BANDEIRA) {
-                    this.matrizJogo[linha][coluna] = this.VAZIO;
+                if (this.jogo[x][y] === -1) {
+                    this.jogo[x][y] = -2;
+                    this.minasMarcadas++;
+                } else if (this.jogo[x][y] === -2) {
+                    this.jogo[x][y] = -1;
                     this.minasMarcadas--;
-                    if (this.matriz[linha][coluna] === this.MINA) {
-                        this.minasRestantes++;
+                }
+                return true;
+            }
+
+            verificarVitoria() {
+                for (let x = 0; x < this.linhas; x++) {
+                    for (let y = 0; y < this.colunas; y++) {
+                        if (this.tabuleiro[x][y] === 9 && this.jogo[x][y] !== -2) {
+                            return false;
+                        }
+                        if (this.tabuleiro[x][y] !== 9 && this.jogo[x][y] === -1) {
+                            return false;
+                        }
                     }
                 }
                 return true;
             }
-            
-            jogoVencido() {
-                return this.minasRestantes === 0;
-            }
-            
+
             getMinasRestantes() {
-                return this.MINAS_TOTAL - this.minasMarcadas;
+                return this.totalMinas - this.minasMarcadas;
             }
         }
 
-        class JogoUI {
-            constructor() {
-                this.jogo = new CampoMinado();
-                this.tempo = 0;
-                this.intervalo = null;
-                this.jogando = false;
-                
-                this.elementos = {
-                    tabuleiro: document.getElementById('game-board'),
-                    minasCount: document.getElementById('minas-count'),
-                    timer: document.getElementById('timer'),
-                    restartBtn: document.getElementById('restart-btn'),
-                    gameOver: document.getElementById('game-over'),
-                    gameOverMsg: document.getElementById('game-over-message'),
-                    playAgainBtn: document.getElementById('play-again-btn')
-                };
-                
-                this.iniciarEventos();
-                this.criarTabuleiro();
-                this.atualizarUI();
-            }
+        let jogo;
+        let tempo = 0;
+        let intervalo;
+        let jogoIniciado = false;
+
+        function iniciar() {
+            jogo = new CampoMinado();
+            tempo = 0;
+            jogoIniciado = false;
+            document.getElementById('tempo').textContent = '0';
+            document.getElementById('contador-minas').textContent = '10';
+            document.getElementById('fim-jogo').classList.add('oculto');
+            criarTabuleiro();
+        }
+
+        function criarTabuleiro() {
+            const tabuleiro = document.getElementById('tabuleiro');
+            tabuleiro.innerHTML = '';
             
-            iniciarEventos() {
-                this.elementos.restartBtn.addEventListener('click', () => this.reiniciar());
-                this.elementos.playAgainBtn.addEventListener('click', () => this.reiniciar());
-                this.elementos.tabuleiro.addEventListener('contextmenu', (e) => e.preventDefault());
-            }
-            
-            criarTabuleiro() {
-                this.elementos.tabuleiro.innerHTML = '';
-                
-                for (let i = 0; i < this.jogo.LINHAS; i++) {
-                    for (let j = 0; j < this.jogo.COLUNAS; j++) {
-                        const celula = document.createElement('div');
-                        celula.className = 'cell';
-                        celula.dataset.linha = i;
-                        celula.dataset.coluna = j;
-                        
-                        celula.addEventListener('click', (e) => {
-                            if (!this.jogando) {
-                                this.jogando = true;
-                                this.iniciarTempo();
-                            }
-                            this.clicarCelula(i, j, 'esquerdo');
-                        });
-                        
-                        celula.addEventListener('contextmenu', (e) => {
-                            e.preventDefault();
-                            if (!this.jogando) {
-                                this.jogando = true;
-                                this.iniciarTempo();
-                            }
-                            this.clicarCelula(i, j, 'direito');
-                        });
-                        
-                        this.elementos.tabuleiro.appendChild(celula);
-                    }
-                }
-                this.atualizarTabuleiro();
-            }
-            
-            clicarCelula(linha, coluna, tipo) {
-                if (this.jogo.gameOver) return;
-                
-                let sucesso = false;
-                if (tipo === 'esquerdo') {
-                    sucesso = this.jogo.revelar(linha, coluna);
-                } else {
-                    sucesso = this.jogo.marcar(linha, coluna);
-                }
-                
-                if (sucesso) {
-                    this.atualizarTabuleiro();
-                    this.atualizarUI();
-                    this.verificarFimJogo();
-                }
-            }
-            
-            atualizarTabuleiro() {
-                const celulas = this.elementos.tabuleiro.getElementsByClassName('cell');
-                
-                for (let celula of celulas) {
-                    const linha = parseInt(celula.dataset.linha);
-                    const coluna = parseInt(celula.dataset.coluna);
-                    const valor = this.jogo.matrizJogo[linha][coluna];
+            for (let x = 0; x < jogo.linhas; x++) {
+                for (let y = 0; y < jogo.colunas; y++) {
+                    const celula = document.createElement('div');
+                    celula.className = 'celula';
+                    celula.dataset.x = x;
+                    celula.dataset.y = y;
                     
-                    celula.className = 'cell';
-                    celula.textContent = '';
+                    celula.addEventListener('click', () => clicarCelula(x, y, 'esquerdo'));
+                    celula.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        clicarCelula(x, y, 'direito');
+                    });
                     
-                    if (valor === this.jogo.VAZIO) {
-                        // Celula nao revelada
-                    } else if (valor === this.jogo.BANDEIRA) {
-                        celula.classList.add('flagged');
-                        celula.textContent = '%';
-                    } else if (valor === this.jogo.MINA) {
-                        celula.classList.add('revealed', 'mine');
-                        celula.textContent = '@';
-                    } else if (valor > 0) {
-                        celula.classList.add('revealed', `number-${valor}`);
-                        celula.textContent = valor;
-                    } else {
-                        celula.classList.add('revealed');
-                    }
+                    tabuleiro.appendChild(celula);
                 }
             }
-            
-            atualizarUI() {
-                this.elementos.minasCount.textContent = this.jogo.getMinasRestantes();
+            atualizarTabuleiro();
+        }
+
+        function clicarCelula(x, y, tipo) {
+            if (!jogoIniciado) {
+                jogoIniciado = true;
+                iniciarTempo();
             }
             
-            iniciarTempo() {
-                this.tempo = 0;
-                this.intervalo = setInterval(() => {
-                    this.tempo++;
-                    this.elementos.timer.textContent = this.tempo;
-                }, 1000);
+            if (tipo === 'esquerdo') {
+                jogo.revelar(x, y);
+            } else {
+                jogo.marcar(x, y);
             }
             
-            pararTempo() {
-                if (this.intervalo) {
-                    clearInterval(this.intervalo);
-                    this.intervalo = null;
-                }
-            }
-            
-            verificarFimJogo() {
-                if (this.jogo.gameOver) {
-                    this.mostrarFimJogo(false);
-                } else if (this.jogo.jogoVencido()) {
-                    this.mostrarFimJogo(true);
-                }
-            }
-            
-            mostrarFimJogo(vitoria) {
-                this.pararTempo();
-                this.jogando = false;
+            atualizarTabuleiro();
+            verificarFimJogo();
+        }
+
+        function atualizarTabuleiro() {
+            const celulas = document.querySelectorAll('.celula');
+            celulas.forEach(celula => {
+                const x = parseInt(celula.dataset.x);
+                const y = parseInt(celula.dataset.y);
+                const valor = jogo.jogo[x][y];
                 
-                if (vitoria) {
-                    this.elementos.gameOverMsg.textContent = 'VOCE VENCEU O JOGO!!!';
-                    this.elementos.gameOverMsg.className = 'win';
-                } else {
-                    this.elementos.gameOverMsg.textContent = 'GAME OVER! Voce atingiu uma mina.';
-                    this.elementos.gameOverMsg.className = 'lose';
-                    this.revelarMinas();
-                }
+                celula.className = 'celula';
+                celula.textContent = '';
                 
-                this.elementos.gameOver.classList.remove('hidden');
-            }
+                if (valor === -1) {
+                    // Não revelado
+                } else if (valor === -2) {
+                    celula.classList.add('bandeira');
+                    celula.textContent = '🚩';
+                } else if (valor === 9) {
+                    celula.classList.add('revelada', 'mina');
+                    celula.textContent = '💣';
+                } else if (valor > 0) {
+                    celula.classList.add('revelada', `numero-${valor}`);
+                    celula.textContent = valor;
+                } else if (valor === 0) {
+                    celula.classList.add('revelada');
+                }
+            });
             
-            revelarMinas() {
-                for (let i = 0; i < this.jogo.LINHAS; i++) {
-                    for (let j = 0; j < this.jogo.COLUNAS; j++) {
-                        if (this.jogo.matriz[i][j] === this.jogo.MINA) {
-                            this.jogo.matrizJogo[i][j] = this.jogo.MINA;
+            document.getElementById('contador-minas').textContent = jogo.getMinasRestantes();
+        }
+
+        function iniciarTempo() {
+            clearInterval(intervalo);
+            tempo = 0;
+            intervalo = setInterval(() => {
+                tempo++;
+                document.getElementById('tempo').textContent = tempo;
+            }, 1000);
+        }
+
+        function verificarFimJogo() {
+            if (jogo.fimDeJogo) {
+                fimJogo(false);
+            } else if (jogo.verificarVitoria()) {
+                fimJogo(true);
+            }
+        }
+
+        function fimJogo(vitoria) {
+            clearInterval(intervalo);
+            jogoIniciado = false;
+            
+            const mensagem = document.getElementById('mensagem-fim');
+            const fim = document.getElementById('fim-jogo');
+            
+            if (vitoria) {
+                mensagem.textContent = '🎉 Parabéns! Você venceu! 🎉';
+                mensagem.style.color = '#27ae60';
+            } else {
+                mensagem.textContent = '💥 Game Over! Tente novamente.';
+                mensagem.style.color = '#e74c3c';
+                // Revelar todas as minas
+                for (let x = 0; x < jogo.linhas; x++) {
+                    for (let y = 0; y < jogo.colunas; y++) {
+                        if (jogo.tabuleiro[x][y] === 9) {
+                            jogo.jogo[x][y] = 9;
                         }
                     }
                 }
-                this.atualizarTabuleiro();
+                atualizarTabuleiro();
             }
             
-            reiniciar() {
-                this.pararTempo();
-                this.jogo.iniciar();
-                this.tempo = 0;
-                this.elementos.timer.textContent = '0';
-                this.jogando = false;
-                this.elementos.gameOver.classList.add('hidden');
-                this.criarTabuleiro();
-                this.atualizarUI();
-            }
+            fim.classList.remove('oculto');
         }
 
-        // Iniciar o jogo quando a pagina carregar
-        document.addEventListener('DOMContentLoaded', () => {
-            new JogoUI();
-        });
+        function reiniciarJogo() {
+            clearInterval(intervalo);
+            iniciar();
+        }
+
+        // Iniciar o jogo quando a página carregar
+        document.addEventListener('DOMContentLoaded', iniciar);
     </script>
 </body>
 </html>
