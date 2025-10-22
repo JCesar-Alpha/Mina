@@ -25,7 +25,7 @@ class CampoMinado {
                     temMina: false,
                     revelada: false,
                     bandeira: false,
-                    interrogação: false,
+                    interrogacao: false, // Corrigido: sem acento
                     valor: 0, // 0 = vazia, 1-8 = número de minas adjacentes
                     x: x,
                     y: y
@@ -50,18 +50,32 @@ class CampoMinado {
         
         // Calcular números adjacentes
         this.calcularAdjacentes();
+        
+        // Revelar a primeira célula (que é garantidamente segura)
+        this.revelarCelulaSegura(primeiroX, primeiroY);
     }
 
     distribuirMinas(excluirX, excluirY) {
         let minasColocadas = 0;
+        const posicoesSeguras = new Set();
+        
+        // Marcar a célula clicada e suas adjacentes como seguras
+        for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+                const x = excluirX + dx;
+                const y = excluirY + dy;
+                if (this.dentroDoTabuleiro(x, y)) {
+                    posicoesSeguras.add(`${x},${y}`);
+                }
+            }
+        }
         
         while (minasColocadas < this.totalMinas) {
             const x = Math.floor(Math.random() * this.largura);
             const y = Math.floor(Math.random() * this.altura);
             
-            // Não colocar mina na célula inicial nem nas adjacentes
-            const distancia = Math.max(Math.abs(x - excluirX), Math.abs(y - excluirY));
-            if (distancia <= 1) continue;
+            // Não colocar mina em posições seguras
+            if (posicoesSeguras.has(`${x},${y}`)) continue;
             
             if (!this.tabuleiro[y][x].temMina) {
                 this.tabuleiro[y][x].temMina = true;
@@ -104,15 +118,29 @@ class CampoMinado {
         return x >= 0 && x < this.largura && y >= 0 && y < this.altura;
     }
 
+    revelarCelulaSegura(x, y) {
+        const celula = this.tabuleiro[y][x];
+        if (!celula.revelada) {
+            celula.revelada = true;
+            this.celulasReveladas++;
+            
+            // Se for célula vazia (valor 0), revelar recursivamente
+            if (celula.valor === 0) {
+                this.revelarVizinhos(x, y);
+            }
+        }
+    }
+
     revelarCelula(x, y) {
         if (!this.jogoIniciado) {
             this.iniciarJogo(x, y);
+            return;
         }
 
         const celula = this.tabuleiro[y][x];
         
         // Não revelar se já está revelada, com bandeira ou interrogação
-        if (celula.revelada || celula.bandeira || celula.interrogação || this.jogoAcabou) {
+        if (celula.revelada || celula.bandeira || celula.interrogacao || this.jogoAcabou) {
             return;
         }
 
@@ -147,7 +175,7 @@ class CampoMinado {
             if (this.dentroDoTabuleiro(novoX, novoY)) {
                 const vizinho = this.tabuleiro[novoY][novoX];
                 
-                if (!vizinho.revelada && !vizinho.bandeira && !vizinho.interrogação) {
+                if (!vizinho.revelada && !vizinho.bandeira && !vizinho.interrogacao) {
                     this.revelarCelula(novoX, novoY);
                 }
             }
@@ -161,18 +189,18 @@ class CampoMinado {
 
         const celula = this.tabuleiro[y][x];
         
-        if (!celula.bandeira && !celula.interrogação) {
+        if (!celula.bandeira && !celula.interrogacao) {
             // Colocar bandeira
             celula.bandeira = true;
             this.bandeirasColocadas++;
         } else if (celula.bandeira) {
             // Remover bandeira e colocar interrogação
             celula.bandeira = false;
-            celula.interrogação = true;
+            celula.interrogacao = true;
             this.bandeirasColocadas--;
-        } else if (celula.interrogação) {
+        } else if (celula.interrogacao) {
             // Remover interrogação
-            celula.interrogação = false;
+            celula.interrogacao = false;
         }
     }
 
@@ -182,6 +210,9 @@ class CampoMinado {
         }
 
         const celula = this.tabuleiro[y][x];
+        // Só funciona em células com números (não vazias)
+        if (celula.valor === 0) return;
+
         const bandeirasAdjacentes = this.contarBandeirasAdjacentes(x, y);
 
         if (bandeirasAdjacentes === celula.valor) {
@@ -224,7 +255,7 @@ class CampoMinado {
             if (this.dentroDoTabuleiro(novoX, novoY)) {
                 const vizinho = this.tabuleiro[novoY][novoX];
                 
-                if (!vizinho.revelada && !vizinho.bandeira && !vizinho.interrogação) {
+                if (!vizinho.revelada && !vizinho.bandeira && !vizinho.interrogacao) {
                     this.revelarCelula(novoX, novoY);
                 }
             }
@@ -247,6 +278,9 @@ class CampoMinado {
         if (!vitoria) {
             // Revelar todas as minas
             this.revelarTodasMinas();
+        } else {
+            // Colocar bandeiras em todas as minas restantes
+            this.colocarBandeirasNasMinas();
         }
     }
 
@@ -254,8 +288,20 @@ class CampoMinado {
         for (let y = 0; y < this.altura; y++) {
             for (let x = 0; x < this.largura; x++) {
                 const celula = this.tabuleiro[y][x];
-                if (celula.temMina) {
+                if (celula.temMina && !celula.bandeira) {
                     celula.revelada = true;
+                }
+            }
+        }
+    }
+
+    colocarBandeirasNasMinas() {
+        for (let y = 0; y < this.altura; y++) {
+            for (let x = 0; x < this.largura; x++) {
+                const celula = this.tabuleiro[y][x];
+                if (celula.temMina && !celula.bandeira) {
+                    celula.bandeira = true;
+                    this.bandeirasColocadas++;
                 }
             }
         }
@@ -303,9 +349,33 @@ class CampoMinado {
     estaAtivo() {
         return this.jogoIniciado && !this.jogoAcabou;
     }
+
+    // Método para debug (opcional)
+    debugTabuleiro() {
+        let output = '';
+        for (let y = 0; y < this.altura; y++) {
+            for (let x = 0; x < this.largura; x++) {
+                const celula = this.tabuleiro[y][x];
+                if (celula.temMina) {
+                    output += '💣 ';
+                } else if (celula.valor > 0) {
+                    output += celula.valor + ' ';
+                } else {
+                    output += '· ';
+                }
+            }
+            output += '\n';
+        }
+        console.log(output);
+    }
 }
 
-// Exportar para uso em outros arquivos
+// Para uso no navegador
+if (typeof window !== 'undefined') {
+    window.CampoMinado = CampoMinado;
+}
+
+// Para uso com Node.js
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = CampoMinado;
 }
