@@ -1,262 +1,349 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+class CampoMinado {
+    constructor() {
+        this.QUANTIDADE_MINAS = 10;
+        this.MINA = -1;
+        this.VAZIO = 0;
+        this.VAZIO_JOGO = -2;
+        this.MINA_MARCADA = -3;
+        this.QUANTIDADE_LINHAS = 9;
+        this.QUANTIDADE_COLUNAS = 9;
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        this.matriz = [];
+        this.matrizJogo = [];
+        this.gameOver = false;
+        this.quantidadeMinasEscondidas = this.QUANTIDADE_MINAS;
+        this.quantidadeMinasMarcadas = 0;
 
-.container {
-    max-width: 600px;
-    width: 100%;
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-}
+        this.vizinhosParaRevelar = [];
+        this.vizinhosRevelados = [];
 
-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 2.2em;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #ecf0f1;
-    padding: 15px;
-    border-radius: 10px;
-    border: 2px solid #bdc3c7;
-}
-
-.info-item {
-    background: white;
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: 2px solid #3498db;
-    font-weight: bold;
-}
-
-.label {
-    color: #2c3e50;
-    margin-right: 5px;
-}
-
-#minas-count, #timer {
-    color: #e74c3c;
-    font-size: 1.1em;
-}
-
-#restart-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-#restart-btn:hover {
-    background: #c0392b;
-    transform: translateY(-2px);
-}
-
-main {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(9, 35px);
-    grid-template-rows: repeat(9, 35px);
-    gap: 2px;
-    background: #7f8c8d;
-    padding: 8px;
-    border-radius: 8px;
-    border: 3px solid #2c3e50;
-}
-
-.cell {
-    width: 35px;
-    height: 35px;
-    background: #bdc3c7;
-    border: 3px outset #ecf0f1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.2s ease;
-    border-radius: 3px;
-}
-
-.cell:hover {
-    background: #d5dbdb;
-    transform: scale(1.05);
-}
-
-.cell.revealed {
-    background: #ecf0f1;
-    border: 1px solid #bdc3c7;
-    transform: scale(1);
-}
-
-.cell.mine {
-    background: #e74c3c;
-    color: white;
-}
-
-.cell.flagged {
-    background: #f1c40f;
-    color: #2c3e50;
-}
-
-.cell.number-1 { color: #3498db; }
-.cell.number-2 { color: #27ae60; }
-.cell.number-3 { color: #e74c3c; }
-.cell.number-4 { color: #8e44ad; }
-.cell.number-5 { color: #e67e22; }
-.cell.number-6 { color: #1abc9c; }
-.cell.number-7 { color: #2c3e50; }
-.cell.number-8 { color: #7f8c8d; }
-
-.instructions {
-    background: #ecf0f1;
-    padding: 20px;
-    border-radius: 10px;
-    border-left: 5px solid #3498db;
-    margin-bottom: 20px;
-}
-
-.instructions h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.3em;
-}
-
-.instructions ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.instructions li {
-    margin-bottom: 8px;
-    color: #34495e;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-}
-
-.instructions li strong {
-    color: #2c3e50;
-    margin-left: 5px;
-}
-
-.game-over {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.game-over-content {
-    background: white;
-    padding: 40px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    max-width: 400px;
-    width: 90%;
-}
-
-.game-over h2 {
-    margin-bottom: 25px;
-    font-size: 1.8em;
-    line-height: 1.4;
-}
-
-#play-again-btn {
-    background: #27ae60;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-#play-again-btn:hover {
-    background: #219a52;
-    transform: translateY(-2px);
-}
-
-.hidden {
-    display: none !important;
-}
-
-.win-message {
-    color: #27ae60;
-}
-
-.lose-message {
-    color: #e74c3c;
-}
-
-/* Responsividade */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-        margin: 10px;
+        this.inicializar();
     }
-    
-    .game-board {
-        grid-template-columns: repeat(9, 30px);
-        grid-template-rows: repeat(9, 30px);
+
+    inicializar() {
+        // Inicializar matrizes
+        this.matriz = Array(this.QUANTIDADE_LINHAS).fill().map(() => Array(this.QUANTIDADE_COLUNAS).fill(0));
+        this.matrizJogo = Array(this.QUANTIDADE_LINHAS).fill().map(() => Array(this.QUANTIDADE_COLUNAS).fill(this.VAZIO));
+        
+        this.gameOver = false;
+        this.quantidadeMinasEscondidas = this.QUANTIDADE_MINAS;
+        this.quantidadeMinasMarcadas = 0;
+        this.vizinhosParaRevelar = [];
+        this.vizinhosRevelados = [];
+
+        // Colocar minas
+        for (let i = 0; i < this.QUANTIDADE_MINAS; i++) {
+            this.colocarMinas();
+        }
+
+        // Calcular vizinhos
+        this.mudarVizinhos();
     }
-    
-    .cell {
-        width: 30px;
-        height: 30px;
-        font-size: 12px;
+
+    colocarMinas() {
+        let linha, coluna;
+        do {
+            linha = Math.floor(Math.random() * this.QUANTIDADE_LINHAS);
+            coluna = Math.floor(Math.random() * this.QUANTIDADE_COLUNAS);
+        } while (this.matriz[linha][coluna] === this.MINA);
+
+        this.matriz[linha][coluna] = this.MINA;
     }
-    
-    .game-info {
-        flex-direction: column;
-        gap: 10px;
+
+    mudarVizinhos() {
+        const direcoes = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1],           [0, 1],
+            [1, -1],  [1, 0],  [1, 1]
+        ];
+
+        for (let i = 0; i < this.QUANTIDADE_LINHAS; i++) {
+            for (let j = 0; j < this.QUANTIDADE_COLUNAS; j++) {
+                if (this.matriz[i][j] !== this.MINA) {
+                    let count = 0;
+                    for (const [dx, dy] of direcoes) {
+                        const ni = i + dx;
+                        const nj = j + dy;
+                        if (ni >= 0 && ni < this.QUANTIDADE_LINHAS && nj >= 0 && nj < this.QUANTIDADE_COLUNAS) {
+                            if (this.matriz[ni][nj] === this.MINA) {
+                                count++;
+                            }
+                        }
+                    }
+                    this.matriz[i][j] = count;
+                }
+            }
+        }
     }
-    
-    h1 {
-        font-size: 1.8em;
+
+    jogar(linha, coluna, operacao) {
+        if (this.gameOver || linha < 0 || linha >= this.QUANTIDADE_LINHAS || coluna < 0 || coluna >= this.QUANTIDADE_COLUNAS) {
+            return false;
+        }
+
+        // Operação 1: Revelar
+        if (operacao === 1 && this.matrizJogo[linha][coluna] === this.VAZIO) {
+            if (this.matriz[linha][coluna] === this.MINA) {
+                this.matrizJogo[linha][coluna] = this.MINA;
+                this.gameOver = true;
+                return true;
+            }
+
+            if (this.matriz[linha][coluna] > 0) {
+                this.matrizJogo[linha][coluna] = this.matriz[linha][coluna];
+            }
+
+            if (this.matriz[linha][coluna] === this.VAZIO) {
+                this.revelaVizinhos(linha, coluna);
+                while (this.vizinhosParaRevelar.length > 0) {
+                    const vizinho = this.vizinhosParaRevelar.shift();
+                    this.revelaVizinhos(vizinho.linha, vizinho.coluna);
+                }
+            }
+        }
+
+        // Operação 2: Marcar mina
+        if (operacao === 2) {
+            if (this.matrizJogo[linha][coluna] === this.VAZIO && this.quantidadeMinasMarcadas < this.QUANTIDADE_MINAS) {
+                this.matrizJogo[linha][coluna] = this.MINA_MARCADA;
+                this.quantidadeMinasMarcadas++;
+                if (this.matriz[linha][coluna] === this.MINA) {
+                    this.quantidadeMinasEscondidas--;
+                }
+            } else if (this.matrizJogo[linha][coluna] === this.MINA_MARCADA) {
+                // Desmarcar se já estiver marcada
+                this.matrizJogo[linha][coluna] = this.VAZIO;
+                this.quantidadeMinasMarcadas--;
+                if (this.matriz[linha][coluna] === this.MINA) {
+                    this.quantidadeMinasEscondidas++;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    revelaVizinhos(i, j) {
+        // Marcar como revelado
+        this.matrizJogo[i][j] = this.matriz[i][j] === 0 ? this.VAZIO_JOGO : this.matriz[i][j];
+
+        const vizinhoRevelado = { linha: i, coluna: j };
+        this.vizinhosRevelados.push(vizinhoRevelado);
+
+        // Remover da lista de para revelar
+        const index = this.vizinhosParaRevelar.findIndex(v => v.linha === i && v.coluna === j);
+        if (index > -1) {
+            this.vizinhosParaRevelar.splice(index, 1);
+        }
+
+        // Se for vazio, revelar vizinhos
+        if (this.matriz[i][j] === 0) {
+            const direcoes = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+
+            for (const [dx, dy] of direcoes) {
+                const ni = i + dx;
+                const nj = j + dy;
+                
+                if (ni >= 0 && ni < this.QUANTIDADE_LINHAS && nj >= 0 && nj < this.QUANTIDADE_COLUNAS) {
+                    if (this.matrizJogo[ni][nj] === this.VAZIO && !this.vizinhosRevelados.some(v => v.linha === ni && v.coluna === nj)) {
+                        const novoVizinho = { linha: ni, coluna: nj };
+                        this.vizinhosParaRevelar.push(novoVizinho);
+                    }
+                }
+            }
+        }
+    }
+
+    todasCelulasMarcadas() {
+        for (let i = 0; i < this.QUANTIDADE_LINHAS; i++) {
+            for (let j = 0; j < this.QUANTIDADE_COLUNAS; j++) {
+                if (this.matrizJogo[i][j] === this.VAZIO) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    getQuantidadeMinasMarcadas() {
+        return Math.max(0, this.QUANTIDADE_MINAS - this.quantidadeMinasMarcadas);
     }
 }
+
+class GameUI {
+    constructor() {
+        this.game = new CampoMinado();
+        this.timer = 0;
+        this.timerInterval = null;
+        this.isFirstMove = false;
+
+        this.initializeElements();
+        this.initializeEventListeners();
+        this.renderBoard();
+        this.updateUI();
+    }
+
+    initializeElements() {
+        this.gameBoard = document.getElementById('game-board');
+        this.minasCount = document.getElementById('minas-count');
+        this.timerDisplay = document.getElementById('timer');
+        this.restartBtn = document.getElementById('restart-btn');
+        this.gameOverScreen = document.getElementById('game-over');
+        this.gameOverMessage = document.getElementById('game-over-message');
+        this.playAgainBtn = document.getElementById('play-again-btn');
+    }
+
+    initializeEventListeners() {
+        this.restartBtn.addEventListener('click', () => this.restartGame());
+        this.playAgainBtn.addEventListener('click', () => this.restartGame());
+        
+        // Prevenir menu contextual no clique direito
+        this.gameBoard.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+
+    renderBoard() {
+        this.gameBoard.innerHTML = '';
+        
+        for (let i = 0; i < this.game.QUANTIDADE_LINHAS; i++) {
+            for (let j = 0; j < this.game.QUANTIDADE_COLUNAS; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.row = i;
+                cell.dataset.col = j;
+                
+                // Clique esquerdo
+                cell.addEventListener('click', () => this.handleCellClick(i, j, 1));
+                
+                // Clique direito
+                cell.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    this.handleCellClick(i, j, 2);
+                });
+
+                this.gameBoard.appendChild(cell);
+            }
+        }
+        
+        this.updateBoard();
+    }
+
+    updateBoard() {
+        const cells = this.gameBoard.getElementsByClassName('cell');
+        
+        for (let cell of cells) {
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+            const cellValue = this.game.matrizJogo[row][col];
+            const actualValue = this.game.matriz[row][col];
+            
+            // Reset classes
+            cell.className = 'cell';
+            cell.textContent = '';
+            
+            if (cellValue === this.game.VAZIO) {
+                // Célula não revelada - não faz nada (mantém estilo padrão)
+            } else if (cellValue === this.game.VAZIO_JOGO) {
+                // Célula vazia revelada
+                cell.classList.add('revealed');
+            } else if (cellValue === this.game.MINA_MARCADA) {
+                // Mina marcada
+                cell.classList.add('flagged');
+                cell.textContent = '%';
+            } else if (cellValue === this.game.MINA) {
+                // Mina revelada
+                cell.classList.add('revealed', 'mine');
+                cell.textContent = '@';
+            } else if (cellValue > 0) {
+                // Número revelado
+                cell.classList.add('revealed', `number-${cellValue}`);
+                cell.textContent = cellValue;
+            }
+        }
+    }
+
+    handleCellClick(row, col, operation) {
+        if (!this.isFirstMove) {
+            this.isFirstMove = true;
+            this.startTimer();
+        }
+
+        if (this.game.jogar(row, col, operation)) {
+            this.updateBoard();
+            this.updateUI();
+            this.checkGameStatus();
+        }
+    }
+
+    startTimer() {
+        this.timer = 0;
+        this.timerInterval = setInterval(() => {
+            this.timer++;
+            this.timerDisplay.textContent = this.timer;
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+
+    updateUI() {
+        this.minasCount.textContent = this.game.getQuantidadeMinasMarcadas();
+    }
+
+    checkGameStatus() {
+        if (this.game.gameOver) {
+            this.showGameOver(false);
+        } else if (this.game.todasCelulasMarcadas() && this.game.quantidadeMinasEscondidas === 0) {
+            this.showGameOver(true);
+        }
+    }
+
+    showGameOver(isWin) {
+        this.stopTimer();
+        
+        if (isWin) {
+            this.gameOverMessage.textContent = '🎉 VOCÊ VENCEU O JOGO!!! 🎉';
+            this.gameOverMessage.className = 'win-message';
+        } else {
+            this.gameOverMessage.textContent = '💥 GAME OVER! Você atingiu uma mina.';
+            this.gameOverMessage.className = 'lose-message';
+            this.revealAllMines();
+        }
+        
+        this.gameOverScreen.classList.remove('hidden');
+    }
+
+    revealAllMines() {
+        for (let i = 0; i < this.game.QUANTIDADE_LINHAS; i++) {
+            for (let j = 0; j < this.game.QUANTIDADE_COLUNAS; j++) {
+                if (this.game.matriz[i][j] === this.game.MINA) {
+                    this.game.matrizJogo[i][j] = this.game.MINA;
+                }
+            }
+        }
+        this.updateBoard();
+    }
+
+    restartGame() {
+        this.stopTimer();
+        this.game.inicializar();
+        this.timer = 0;
+        this.timerDisplay.textContent = '0';
+        this.isFirstMove = false;
+        this.gameOverScreen.classList.add('hidden');
+        this.renderBoard();
+        this.updateUI();
+    }
+}
+
+// Inicializar o jogo quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    new GameUI();
+});
