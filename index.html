@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campo Minado Web</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Campo Minado</h1>
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="label">Minas:</span>
+                    <span id="minas-count">10</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Tempo:</span>
+                    <span id="timer">0</span>s
+                </div>
+                <button id="restart-btn">Reiniciar</button>
+            </div>
+        </header>
+
+        <div class="game-container">
+            <div id="game-board" class="game-board"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>Instruções:</h3>
+            <ul>
+                <li>Clique <strong>Esquerdo</strong>: Revelar célula</li>
+                <li>Clique <strong>Direito</strong>: Marcar/Desmarcar mina</li>
+                <li><strong>%</strong>: Mina marcada</li>
+                <li><strong>@</strong>: Mina (quando revelada)</li>
+            </ul>
+        </div>
+
+        <div id="game-over" class="game-over hidden">
+            <div class="game-over-content">
+                <h2 id="game-over-message"></h2>
+                <button id="play-again-btn">Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
