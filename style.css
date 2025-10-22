@@ -9,135 +9,152 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 600px;
+    width: 100%;
     background: white;
     border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 h1 {
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 20px;
-    font-size: 2.5em;
+    font-size: 2.2em;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .game-info {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 20px;
+    background: #ecf0f1;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #bdc3c7;
 }
 
 .info-item {
-    background: #f8f9fa;
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: 2px solid #e9ecef;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid #3498db;
+    font-weight: bold;
 }
 
 .label {
-    font-weight: bold;
-    color: #666;
+    color: #2c3e50;
     margin-right: 5px;
 }
 
+#minas-count, #timer {
+    color: #e74c3c;
+    font-size: 1.1em;
+}
+
 #restart-btn {
-    background: #007bff;
+    background: #e74c3c;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
-    transition: background 0.3s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 #restart-btn:hover {
-    background: #0056b3;
+    background: #c0392b;
+    transform: translateY(-2px);
 }
 
-.game-container {
+main {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(9, 40px);
-    grid-template-rows: repeat(9, 40px);
+    grid-template-columns: repeat(9, 35px);
+    grid-template-rows: repeat(9, 35px);
     gap: 2px;
-    background: #bbb;
-    padding: 5px;
-    border-radius: 5px;
-    border: 3px solid #8b4513;
+    background: #7f8c8d;
+    padding: 8px;
+    border-radius: 8px;
+    border: 3px solid #2c3e50;
 }
 
 .cell {
-    width: 40px;
-    height: 40px;
-    background: #c6c6c6;
-    border: 2px outset #ececec;
+    width: 35px;
+    height: 35px;
+    background: #bdc3c7;
+    border: 3px outset #ecf0f1;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     user-select: none;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    border-radius: 3px;
 }
 
 .cell:hover {
-    background: #d6d6d6;
+    background: #d5dbdb;
+    transform: scale(1.05);
 }
 
 .cell.revealed {
-    background: #e0e0e0;
-    border: 1px solid #bbb;
+    background: #ecf0f1;
+    border: 1px solid #bdc3c7;
+    transform: scale(1);
 }
 
 .cell.mine {
-    background: #ff4444;
+    background: #e74c3c;
     color: white;
 }
 
 .cell.flagged {
-    background: #ffd700;
-    color: #333;
+    background: #f1c40f;
+    color: #2c3e50;
 }
 
-.cell.number-1 { color: #0000ff; }
-.cell.number-2 { color: #008000; }
-.cell.number-3 { color: #ff0000; }
-.cell.number-4 { color: #000080; }
-.cell.number-5 { color: #800000; }
-.cell.number-6 { color: #008080; }
-.cell.number-7 { color: #000000; }
-.cell.number-8 { color: #808080; }
+.cell.number-1 { color: #3498db; }
+.cell.number-2 { color: #27ae60; }
+.cell.number-3 { color: #e74c3c; }
+.cell.number-4 { color: #8e44ad; }
+.cell.number-5 { color: #e67e22; }
+.cell.number-6 { color: #1abc9c; }
+.cell.number-7 { color: #2c3e50; }
+.cell.number-8 { color: #7f8c8d; }
 
 .instructions {
-    background: #f8f9fa;
+    background: #ecf0f1;
     padding: 20px;
     border-radius: 10px;
-    border-left: 4px solid #007bff;
+    border-left: 5px solid #3498db;
+    margin-bottom: 20px;
 }
 
 .instructions h3 {
-    color: #333;
-    margin-bottom: 10px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.3em;
 }
 
 .instructions ul {
@@ -146,8 +163,16 @@ h1 {
 }
 
 .instructions li {
-    margin-bottom: 5px;
-    color: #666;
+    margin-bottom: 8px;
+    color: #34495e;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.instructions li strong {
+    color: #2c3e50;
+    margin-left: 5px;
 }
 
 .game-over {
@@ -156,7 +181,7 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.9);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -168,27 +193,32 @@ h1 {
     padding: 40px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    width: 90%;
 }
 
 .game-over h2 {
-    margin-bottom: 20px;
-    font-size: 2em;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+    line-height: 1.4;
 }
 
 #play-again-btn {
-    background: #28a745;
+    background: #27ae60;
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 12px 30px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
-    transition: background 0.3s;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 #play-again-btn:hover {
-    background: #218838;
+    background: #219a52;
+    transform: translateY(-2px);
 }
 
 .hidden {
@@ -196,9 +226,37 @@ h1 {
 }
 
 .win-message {
-    color: #28a745;
+    color: #27ae60;
 }
 
 .lose-message {
-    color: #dc3545;
+    color: #e74c3c;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+    
+    .game-board {
+        grid-template-columns: repeat(9, 30px);
+        grid-template-rows: repeat(9, 30px);
+    }
+    
+    .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
 }
