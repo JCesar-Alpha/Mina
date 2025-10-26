@@ -1,7 +1,10 @@
 🎯 Campo Minado em React
 Um jogo clássico de Campo Minado desenvolvido em React com interface moderna, responsiva e três níveis de dificuldade.
 
-https://img.shields.io/badge/React-18.2.0-blue https://img.shields.io/badge/License-MIT-green https://img.shields.io/badge/Version-1.0.0-orange
+![React](https://img.shields.io/badge/React-18.2.0-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Version](https://img.shields.io/badge/Version-1.0.0-orange)
+
 
 ✨ Características
 🎮 Jogo clássico de Campo Minado com mecânicas tradicionais
