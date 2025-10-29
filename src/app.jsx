@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './CampoMinado.css';
+import './Campo_Minado.css';
 
 const CampoMinado = () => {
   const [jogo, setJogo] = useState(null);
